@@ -52,4 +52,4 @@ jobs:
             echo "Already using the latest version ($CURRENT_VERSION)"
           fi
         env:
-            GH_TOKEN: ${{ github.token }}
+            GH_TOKEN: ${{ secrets.WORKFLOW_PAT }}
