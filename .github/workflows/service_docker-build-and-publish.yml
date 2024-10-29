@@ -59,7 +59,7 @@ jobs:
           BASE_OS_TRIMMED=$(echo ${{ matrix.base_os }} | cut -d':' -f1)
           echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
           echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
+          echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
           echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
           if [[ "${{ matrix.base_os }}" == "debian"* ]]; then
             echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ matrix.github_cli_version }}" >> $GITHUB_ENV
@@ -67,7 +67,8 @@ jobs:
             echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
             echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
           fi
-          echo "DOCKER_TAGS=${DOCKER_TAGS}"
+          echo "Generated tags:"
+          echo "$DOCKER_TAGS"
 
       - name: Build and push
         uses: docker/build-push-action@v6
