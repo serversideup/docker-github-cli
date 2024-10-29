@@ -25,10 +25,11 @@ RUN serversideup-dep-install-alpine ${ALPINE_DEPENDENCIES} && \
     chown -R "${PUID}:${PGID}" "${GITHUB_WORK_DIR}" && \
     \
     # Create SSH directory for unprivileged user symbolic link target
-    mkdir -p /ssh && \
-    chmod 700 /ssh && \
-    chown "${PUID}:${PGID}" /ssh && \
+    mkdir -p /ssh /config && \
+    chmod 700 /ssh /config && \
+    chown "${PUID}:${PGID}" /ssh /config && \
     ln -s /ssh /home/github/.ssh && \
+    ln -s /config /home/github/.config && \
     \
     # Verify installation
     gh --version
