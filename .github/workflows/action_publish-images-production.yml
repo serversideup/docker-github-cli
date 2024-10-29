@@ -1,0 +1,37 @@
+name: Docker Publish (Production Images)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - src/**
+      - .github/workflows/**
+
+jobs:
+  build-production-images:
+    uses: ./.github/workflows/service_docker-build-and-publish.yml
+    secrets: inherit
+    with:
+      release_type: 'latest'
+
+  update_container_readme:
+    runs-on: ubuntu-24.04
+    name: Push README to Docker Hub
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: push README to Dockerhub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_HUB_README_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKER_HUB_README_PASSWORD }}
+        with:
+          destination_container_repo: serversideup/github-cli
+          provider: dockerhub
+          short_description: 'Run GitHub CLI anywhere with a lightwieght and powerful Docker image.'
+          readme_file: 'README.md'
