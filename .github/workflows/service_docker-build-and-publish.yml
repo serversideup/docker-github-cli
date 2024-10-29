@@ -17,11 +17,15 @@ jobs:
         base_os:
           - alpine:3.20
           - debian:bookworm-slim
-        github_cli_version:
-          - 2.60.0
     steps:
       - name: Check out code.
         uses: actions/checkout@v4
+
+      - name: Read GitHub CLI version
+        id: gh_version
+        run: |
+          GH_VERSION=$(cat github-cli-build-version.txt | tr -d '\n')
+          echo "version=${GH_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -62,14 +66,14 @@ jobs:
           BASE_OS_TRIMMED=$(echo ${{ matrix.base_os }} | cut -d':' -f1)
           
           # Build tags string directly
-          DOCKER_TAGS="docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}"
-          DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}"
+          DOCKER_TAGS="docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ steps.gh_version.outputs.version }}"
+          DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ steps.gh_version.outputs.version }}"
           DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}"
           DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}"
           
           if [[ "${{ matrix.base_os }}" == "debian"* ]]; then
-            DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${{ matrix.github_cli_version }}"
-            DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${{ matrix.github_cli_version }}"
+            DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${{ steps.gh_version.outputs.version }}"
+            DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${{ steps.gh_version.outputs.version }}"
             DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${{ inputs.release_type }}"
             DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${{ inputs.release_type }}"
           fi
@@ -89,7 +93,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             BUILD_BASE_OS_VERSION=${{ matrix.base_os }}
-            BUILD_GITHUB_CLI_VERSION=${{ matrix.github_cli_version }}
+            BUILD_GITHUB_CLI_VERSION=${{ steps.gh_version.outputs.version }}
             REPOSITORY_BUILD_VERSION=${{ env.REPOSITORY_BUILD_VERSION }}
           platforms: |
             linux/amd64
