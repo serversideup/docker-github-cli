@@ -6,7 +6,7 @@ ARG ALPINE_DEPENDENCIES="curl,git,ca-certificates,su-exec,openssh-client,shadow,
 ARG DEBIAN_DEPENDENCIES="curl,git,ca-certificates,gosu,openssh-client,sshpass"
 ARG PUID='1000'
 ARG PGID='1000'
-ARG GITHUB_WORK_DIR='/github'
+ARG GITHUB_WORK_DIR='/workdir'
 ARG REPOSITORY_BUILD_VERSION='dev'
 
 COPY --chown=root:root --chmod=755 src/rootfs /
@@ -25,9 +25,9 @@ RUN serversideup-dep-install-alpine ${ALPINE_DEPENDENCIES} && \
     chown -R "${PUID}:${PGID}" "${GITHUB_WORK_DIR}" && \
     \
     # Create SSH directory for unprivileged user symbolic link target
-    mkdir -p /ssh /config && \
-    chmod 700 /ssh /config && \
-    chown "${PUID}:${PGID}" /ssh /config && \
+    mkdir -p /ssh /config/gh && \
+    chmod 700 /ssh /config/gh && \
+    chown "${PUID}:${PGID}" /ssh /config/gh && \
     ln -s /ssh /home/github/.ssh && \
     ln -s /config /home/github/.config && \
     \
@@ -46,6 +46,6 @@ LABEL org.opencontainers.image.title="serversideup/github-cli" \
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-WORKDIR /github
+WORKDIR /workdir
 
 CMD ["gh"]

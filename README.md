@@ -50,14 +50,17 @@ For example, if you rename the `RUN_AS_USER` to something like `bob`, `/home/bob
 #### Working with SSH
 SSH also behaves in a similar way. Keep reading below for more details.
 
+#### Mounting the `/workdir` directory
+We also have a `/workdir` directory that is intended for you your workspace.
+
 ### Change the "run as" user, PUID and PGID
 
 ```bash
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh:ro" \
   -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
-  -v "$(pwd):/github" \
-  -v "$HOME/.config:/config:rw" \
+  -v "$(pwd):/workdir" \
+  -v "$HOME/.config/gh:/config/gh:rw" \
   -e "PUID=9999" \
   -e "PGID=9999" \
   -e "RUN_AS_USER=bob" \
@@ -68,7 +71,7 @@ docker run --rm -it \
 ```bash
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   serversideup/github-cli:latest /bin/sh
 ```
 
@@ -89,7 +92,7 @@ The SSH auth socket is a Unix socket used by the SSH agent to communicate with o
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh:ro" \
   -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   -v "/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock" \
   -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \
   serversideup/github-cli:latest gh --version
@@ -102,7 +105,7 @@ Notice how we're matching the `SSH_AUTH_SOCK` to the host's socket. This is nece
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh:ro" \
  -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   -v "$SSH_AUTH_SOCK:$SSH_AUTH_SOCK" \
   -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK" \
   serversideup/github-cli:latest gh --version
