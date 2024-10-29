@@ -11,7 +11,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      workflows: write
     steps:
       - uses: actions/checkout@v4
 
@@ -24,31 +23,23 @@ jobs:
 
       - name: Check and update version
         run: |
-          # Read current version from Dockerfile
-          CURRENT_VERSION=$(grep -oP 'BUILD_GITHUB_CLI_VERSION=\K[0-9.]+' src/Dockerfile)
-          echo "Current version: $CURRENT_VERSION"
+          CURRENT_VERSION=$(cat github-cli-build-version.txt)
           
           if [ "$CURRENT_VERSION" != "${{ env.LATEST_VERSION }}" ]; then
-            echo "Updating version from $CURRENT_VERSION to ${{ env.LATEST_VERSION }}"
-            
             # Create new branch
             git checkout -b update-gh-cli-version-${{ env.LATEST_VERSION }}
             
-            # Update Dockerfile
-            sed -i "s/BUILD_GITHUB_CLI_VERSION=$CURRENT_VERSION/BUILD_GITHUB_CLI_VERSION=${{ env.LATEST_VERSION }}/" src/Dockerfile
-            
-            # Update workflow file
-            sed -i "s/- $CURRENT_VERSION/- ${{ env.LATEST_VERSION }}/" .github/workflows/service_docker-build-and-publish.yml
+            # Update version file
+            echo "${{ env.LATEST_VERSION }}" > github-cli-build-version.txt
             
             # Create commit and push
             git config --global user.name 'github-actions[bot]'
             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-            git add src/Dockerfile .github/workflows/service_docker-build-and-publish.yml
+            git add github-cli-build-version.txt
             git commit -m "chore: update GitHub CLI version to ${{ env.LATEST_VERSION }}"
             git push origin update-gh-cli-version-${{ env.LATEST_VERSION }}
             
             # Create PR
-            gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
             gh pr create \
               --title "chore: update GitHub CLI version to ${{ env.LATEST_VERSION }}" \
               --body "Automated PR to update GitHub CLI version from $CURRENT_VERSION to ${{ env.LATEST_VERSION }}" \
