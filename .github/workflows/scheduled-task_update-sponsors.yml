@@ -6,6 +6,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
@@ -33,8 +36,26 @@ jobs:
           template: '<a href="https://github.com/{{{ login }}}"><img src="https://github.com/{{{ login }}}.png" width="40px" alt="{{{ login }}}" /></a>&nbsp;&nbsp;'
           file: 'README.md'
 
-      - name: Deploy to GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: main
-          folder: '.'
+      - name: Create PR and enable auto-merge 🔄
+        run: |
+          # Configure git
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Create new branch
+          git checkout -b update-sponsors-$(date +%Y%m%d-%H%M%S)
+          
+          # Commit changes
+          git add README.md
+          git commit -m "chore: update sponsors"
+          git push origin HEAD
+          
+          # Create PR and enable auto-merge
+          PR_URL=$(gh pr create \
+            --title "chore: update sponsors" \
+            --body "Automated PR to update sponsors section in README" \
+            --base main)
+          
+          gh pr merge --auto --delete-branch --squash "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.SPONSORS_README_ACTION_PERSONAL_ACCESS_TOKEN }}
