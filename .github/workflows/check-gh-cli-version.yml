@@ -43,7 +43,6 @@ jobs:
             PR_URL=$(gh pr create \
               --title "chore: update GitHub CLI version to ${{ env.LATEST_VERSION }}" \
               --body "Automated PR to update GitHub CLI version from $CURRENT_VERSION to ${{ env.LATEST_VERSION }}" \
-              --label "dependencies" \
               --base main \
               --head update-gh-cli-version-${{ env.LATEST_VERSION }})
             
