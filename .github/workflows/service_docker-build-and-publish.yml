@@ -56,10 +56,11 @@ jobs:
       
       - name: Prepare Docker tags
         run: |
-          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${{ matrix.base_os }}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ matrix.base_os }}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${{ matrix.base_os }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ matrix.base_os }}" >> $GITHUB_ENV
+          BASE_OS_TRIMMED=$(echo ${{ matrix.base_os }} | cut -d':' -f1)
+          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
+          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
+          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
+          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
           if [[ "${{ matrix.base_os }}" == "debian"* ]]; then
             echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ matrix.github_cli_version }}" >> $GITHUB_ENV
             echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ matrix.github_cli_version }}" >> $GITHUB_ENV
