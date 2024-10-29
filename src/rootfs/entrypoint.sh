@@ -84,7 +84,7 @@ if { [ ! -z "${PUID}" ] && [ "${PUID}" != "$default_uid" ]; } || { [ ! -z "${PGI
     groupmod -g "${PGID}" "${run_as_user}" 2>&1 >/dev/null || echo "Error changing group ID."
 
     debug_print "Changing ownership of all files and directories..."
-    chown "${PUID}:${PGID}" "/home/${run_as_user}" "/github"
+    chown "${PUID}:${PGID}" "/home/${run_as_user}" "/workdir" "/config"
 
 fi
 

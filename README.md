@@ -39,14 +39,31 @@ Our images are available on Docker Hub and GitHub Container Registry 🥳
 | --------- | -------------------- |
 | `serversideup/github-cli` | [![DockerHub serversideup/github-cli:alpine](https://img.shields.io/docker/image-size/serversideup/github-cli/alpine?label=alpine)](https://hub.docker.com/r/serversideup/github-cli/tags?name=alpine)<br>[![DockerHub serversideup/github-cli](https://img.shields.io/docker/image-size/serversideup/github-cli/latest?label=debian)](https://hub.docker.com/r/serversideup/github-cli)
 
+### Mounting directories
+There are a few directories that we need to mount to ensure everything works correctly.
+
+#### Mounting the `/config` directory
+In order to authenticate with GitHub, we need to mount your `~/.config` directory from your host into the container. We have a special `/config` directory that is symbolically linked from the unprivileged user's home directory. We use this root directory so you can change the `RUN_AS_USER` environment variable and not have to worry about having to predict what the absolute path to the configuration directory is. 
+
+For example, if you rename the `RUN_AS_USER` to something like `bob`, `/home/bob/.config` will be symbolically linked to `/config`, giving you a predictable path to mount your configuration files.
+
+#### Working with SSH
+SSH also behaves in a similar way. Keep reading below for more details.
+
+#### Mounting the `/workdir` directory
+We also have a `/workdir` directory that is intended for you your workspace.
+
 ### Change the "run as" user, PUID and PGID
 
 ```bash
 docker run --rm -it \
-  -v "$HOME/.ssh:/ssh" \
-  -v "$(pwd):/github" \
-  -e PUID=9999 -e PGID=9999 \
-  -e RUN_AS_USER=bob \
+  -v "$HOME/.ssh:/ssh:ro" \
+  -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
+  -v "$(pwd):/workdir" \
+  -v "$HOME/.config/gh:/config/gh:rw" \
+  -e "PUID=9999" \
+  -e "PGID=9999" \
+  -e "RUN_AS_USER=bob" \
   serversideup/github-cli:latest gh --version
 ```
 
@@ -54,7 +71,7 @@ docker run --rm -it \
 ```bash
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   serversideup/github-cli:latest /bin/sh
 ```
 
@@ -75,7 +92,7 @@ The SSH auth socket is a Unix socket used by the SSH agent to communicate with o
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh:ro" \
   -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   -v "/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock" \
   -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \
   serversideup/github-cli:latest gh --version
@@ -88,7 +105,7 @@ Notice how we're matching the `SSH_AUTH_SOCK` to the host's socket. This is nece
 docker run --rm -it \
   -v "$HOME/.ssh:/ssh:ro" \
  -v "$HOME/.ssh/known_hosts:/ssh/known_hosts:rw" \
-  -v "$(pwd):/github" \
+  -v "$(pwd):/workdir" \
   -v "$SSH_AUTH_SOCK:$SSH_AUTH_SOCK" \
   -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK" \
   serversideup/github-cli:latest gh --version
