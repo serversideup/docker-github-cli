@@ -8,6 +8,7 @@ on:
     paths:
       - src/**
       - .github/workflows/**
+      - github-cli-build-version.txt
 
 jobs:
   build-production-images:
