@@ -8,6 +8,11 @@ on:
         required: true
         description: 'Release type (latest, beta, edge, dev, etc)'
         default: 'edge'
+      push:
+        type: boolean
+        required: true
+        description: 'Push to Docker Hub and GitHub Container Registry'
+        default: true
 
 jobs:
   build-and-push:
@@ -99,6 +104,6 @@ jobs:
             linux/amd64
             linux/arm64/v8
           pull: true
-          push: true
+          push: ${{ inputs.push }}
           tags: ${{ env.DOCKER_TAGS }}
           outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=Run GitHub CLI anywhere with the power of Docker
