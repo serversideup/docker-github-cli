@@ -52,3 +52,5 @@ jobs:
           else
             echo "Already using the latest version ($CURRENT_VERSION)"
           fi
+        env:
+            GH_TOKEN: ${{ github.token }}
