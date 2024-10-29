@@ -1,6 +1,6 @@
 ARG BUILD_BASE_OS_VERSION=alpine:3.20
 
-FROM ${BASE_IMAGE}
+FROM ${BUILD_BASE_OS_VERSION}
 ARG BUILD_GITHUB_CLI_VERSION=2.60.1
 ARG ALPINE_DEPENDENCIES="curl,git,ca-certificates,su-exec,openssh-client,shadow,sshpass"
 ARG DEBIAN_DEPENDENCIES="curl,git,ca-certificates,gosu,openssh-client,sshpass"
