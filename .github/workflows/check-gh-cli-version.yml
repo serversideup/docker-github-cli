@@ -39,15 +39,21 @@ jobs:
             git commit -m "chore: update GitHub CLI version to ${{ env.LATEST_VERSION }}"
             git push origin update-gh-cli-version-${{ env.LATEST_VERSION }}
             
-            # Create PR first
-            PR_URL=$(gh pr create \
+            # Create PR and capture the PR number
+            PR_NUMBER=$(gh pr create \
               --title "chore: update GitHub CLI version to ${{ env.LATEST_VERSION }}" \
               --body "Automated PR to update GitHub CLI version from $CURRENT_VERSION to ${{ env.LATEST_VERSION }}" \
               --base main \
-              --head update-gh-cli-version-${{ env.LATEST_VERSION }})
+              --head update-gh-cli-version-${{ env.LATEST_VERSION }} \
+              --json number -q .number)
             
-            # Enable auto-merge on the created PR
-            gh pr merge --auto --delete-branch --squash "$PR_URL"
+            # Enable auto-merge with error handling
+            if gh pr merge $PR_NUMBER --auto --delete-branch --squash; then
+              echo "Auto-merge enabled successfully"
+            else
+              echo "Failed to enable auto-merge, but PR was created"
+              exit 0  # Don't fail the workflow just because auto-merge couldn't be enabled
+            fi
           else
             echo "Already using the latest version ($CURRENT_VERSION)"
           fi
