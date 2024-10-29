@@ -67,7 +67,7 @@ jobs:
             echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
             echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
           fi
-          echo "DOCKER_TAGS=${{ env.DOCKER_TAGS }}"
+          echo "DOCKER_TAGS=${DOCKER_TAGS}"
 
       - name: Build and push
         uses: docker/build-push-action@v6
