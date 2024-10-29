@@ -23,6 +23,8 @@ RUN serversideup-dep-install-alpine ${ALPINE_DEPENDENCIES} && \
     # Create default GitHub working directory and set permissions
     mkdir -p "${GITHUB_WORK_DIR}" && \
     chown -R "${PUID}:${PGID}" "${GITHUB_WORK_DIR}" && \
+    git config --global --add safe.directory "${GITHUB_WORK_DIR}" && \
+    
     \
     # Create SSH directory for unprivileged user symbolic link target
     mkdir -p /ssh /config/gh && \
