@@ -56,19 +56,30 @@ jobs:
       
       - name: Prepare Docker tags
         run: |
+          # Initialize empty DOCKER_TAGS variable
+          DOCKER_TAGS=""
+          
           BASE_OS_TRIMMED=$(echo ${{ matrix.base_os }} | cut -d':' -f1)
-          echo "DOCKER_TAGS=docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
-          echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}" >> $GITHUB_ENV
+          
+          # Build tags string directly
+          DOCKER_TAGS="docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}"
+          DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}-${{ matrix.github_cli_version }}"
+          DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${BASE_OS_TRIMMED}"
+          DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${BASE_OS_TRIMMED}"
+          
           if [[ "${{ matrix.base_os }}" == "debian"* ]]; then
-            echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-            echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ matrix.github_cli_version }}" >> $GITHUB_ENV
-            echo "DOCKER_TAGS+=,docker.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
-            echo "DOCKER_TAGS+=,ghcr.io/serversideup/github-cli:${{ inputs.release_type }}" >> $GITHUB_ENV
+            DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${{ matrix.github_cli_version }}"
+            DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${{ matrix.github_cli_version }}"
+            DOCKER_TAGS="${DOCKER_TAGS},docker.io/serversideup/github-cli:${{ inputs.release_type }}"
+            DOCKER_TAGS="${DOCKER_TAGS},ghcr.io/serversideup/github-cli:${{ inputs.release_type }}"
           fi
+          
+          # Set the final DOCKER_TAGS environment variable
+          echo "DOCKER_TAGS=${DOCKER_TAGS}" >> $GITHUB_ENV
+          
+          # Show the tags being generated
           echo "Generated tags:"
-          echo "$DOCKER_TAGS"
+          echo "${DOCKER_TAGS}" | tr ',' '\n'
 
       - name: Build and push
         uses: docker/build-push-action@v6
