@@ -7,6 +7,7 @@ ARG DEBIAN_DEPENDENCIES="curl,git,ca-certificates,gosu,openssh-client,sshpass"
 ARG PUID='1000'
 ARG PGID='1000'
 ARG GITHUB_WORK_DIR='/github'
+ARG REPOSITORY_BUILD_VERSION='dev'
 
 COPY --chown=root:root --chmod=755 src/rootfs /
 
@@ -14,7 +15,7 @@ RUN serversideup-dep-install-alpine ${ALPINE_DEPENDENCIES} && \
     serversideup-dep-install-debian ${DEBIAN_DEPENDENCIES} && \
     \
     # Install GitHub CLI
-    serversideup-install-github-cli ${GITHUB_CLI_VERSION} && \
+    serversideup-install-github-cli ${BUILD_GITHUB_CLI_VERSION} && \
     \
     # Create default unprivileged user and group
     serversideup-create-unprivileged-user github "${PUID}" "${PGID}" && \
