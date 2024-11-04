@@ -45,17 +45,22 @@ jobs:
           # Create new branch
           git checkout -b update-sponsors-$(date +%Y%m%d-%H%M%S)
           
-          # Commit changes
-          git add README.md
-          git commit -m "chore: update sponsors"
-          git push origin HEAD
-          
-          # Create PR and enable auto-merge
-          PR_URL=$(gh pr create \
-            --title "chore: update sponsors" \
-            --body "Automated PR to update sponsors section in README" \
-            --base main)
-          
-          gh pr merge --auto --delete-branch --squash "$PR_URL"
+          # Check if there are any changes
+          if [[ -n "$(git status --porcelain README.md)" ]]; then
+            # Commit changes
+            git add README.md
+            git commit -m "chore: update sponsors"
+            git push origin HEAD
+            
+            # Create PR and enable auto-merge
+            PR_URL=$(gh pr create \
+              --title "chore: update sponsors" \
+              --body "Automated PR to update sponsors section in README" \
+              --base main)
+            
+            gh pr merge --auto --delete-branch --squash "$PR_URL"
+          else
+            echo "No changes to commit. Skipping PR creation."
+          fi
         env:
           GH_TOKEN: ${{ secrets.SPONSORS_README_ACTION_PERSONAL_ACCESS_TOKEN }}
