@@ -26,10 +26,10 @@ if [ -f /etc/alpine-release ]; then
     # Alpine
     addgroup -g "${PGID}" "${username}" && \
     adduser -u "${PUID}" -G "${username}" -h "/home/${username}" -D "${username}"
-    su-exec "${username}" git config --global --add safe.directory "/workdir"
+    su-exec "${username}" git config --global --add safe.directory "/app"
 else
     # Debian
     addgroup --gid "${PGID}" "${username}" && \
     adduser --uid "${PUID}" --gid "${PGID}" --home "/home/${username}" --disabled-password --gecos '' "${username}"
-    gosu "${username}" git config --global --add safe.directory "/workdir"
+    gosu "${username}" git config --global --add safe.directory "/app"
 fi
