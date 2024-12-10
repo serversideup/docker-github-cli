@@ -36,6 +36,6 @@ tar -xzf "gh_${VERSION}_linux_${ARCH}.tar.gz"
 mv "gh_${VERSION}_linux_${ARCH}/bin/gh" /usr/local/bin/gh
 
 # Cleanup
-rm -rf "gh_${VERSION}_linux_${ARCH}" gh.tar.gz checksums.txt
+rm -rf "gh_${VERSION}_linux_${ARCH}" "gh_${VERSION}_linux_${ARCH}.tar.gz" checksums.txt
 
 echo "⚡️ GitHub CLI installation completed"
