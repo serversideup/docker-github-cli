@@ -6,7 +6,7 @@ ARG ALPINE_DEPENDENCIES="curl,git,ca-certificates,su-exec,openssh-client,shadow,
 ARG DEBIAN_DEPENDENCIES="curl,git,ca-certificates,gosu,openssh-client,sshpass"
 ARG PUID='1000'
 ARG PGID='1000'
-ARG GITHUB_WORK_DIR='/workdir'
+ARG GITHUB_WORK_DIR='/app'
 ARG REPOSITORY_BUILD_VERSION='dev'
 
 COPY --chown=root:root --chmod=755 src/rootfs /
@@ -47,6 +47,6 @@ LABEL org.opencontainers.image.title="serversideup/github-cli" \
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-WORKDIR /workdir
+WORKDIR /app
 
 CMD ["gh"]
