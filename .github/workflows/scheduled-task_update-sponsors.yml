@@ -50,9 +50,11 @@ jobs:
             # Commit changes
             git add README.md
             git commit -m "chore: update sponsors"
-            git push origin HEAD
             
-            # Create PR and enable auto-merge
+            # Push the branch BEFORE creating the PR
+            git push -u origin HEAD
+            
+            # Now create PR and enable auto-merge
             PR_URL=$(gh pr create \
               --title "chore: update sponsors" \
               --body "Automated PR to update sponsors section in README" \
