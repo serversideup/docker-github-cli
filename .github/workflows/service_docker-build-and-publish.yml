@@ -20,8 +20,8 @@ jobs:
     strategy:
       matrix:
         base_os:
-          - alpine:3.20
-          - debian:bookworm-slim
+          - alpine:3.22
+          - debian:trixie-slim
     steps:
       - name: Check out code.
         uses: actions/checkout@v4
