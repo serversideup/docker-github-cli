@@ -4,9 +4,9 @@
 ###################################################
 script_name="serversideup-create-unprivileged-user"
 
-############
+#############
 # Sanity checks
-############
+############# 
 if [ $# -ne 3 ]; then
     echo "🛑 ERROR ($script_name): Invalid number of arguments."
     exit 1
