@@ -1,4 +1,4 @@
-name: Docker Publish (Production Images)
+name: Build Docker Images (PRs)
 
 on:
   workflow_dispatch:
