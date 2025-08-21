@@ -10,7 +10,7 @@ on:
       - github-cli-build-version.txt
 
 jobs:
-  build-production-images:
+  build-test-images:
     uses: ./.github/workflows/service_docker-build-and-publish.yml
     secrets: inherit
     with:
