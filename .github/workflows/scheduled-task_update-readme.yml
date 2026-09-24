@@ -6,5 +6,10 @@ on:
 jobs:
   update-readme:
     uses: serversideup/.github/.github/workflows/update-readme.yml@master
+    # main requires PRs with passing checks, so README updates arrive as an auto-merging PR
+    with:
+      commit_mode: pull-request
+    secrets:
+      pr_token: ${{ secrets.WORKFLOW_PAT }}
     permissions:
       contents: write
